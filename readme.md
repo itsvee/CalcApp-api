@@ -1,51 +1,118 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# CalcApp API (Task 2)
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+APIs for CalcApp to store data on cloud service. Powered by Laravel (PHP framework) and Google Cloud Platform.
 
-## About Laravel
+## Namespace and Endpoints
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+this APIs is running on https://semiotic-axis-194016.appspot.com/ 
+(if you click this link and found error, Don't worry :) )
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+namespace of APIS is
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
+```
+/api
+```
 
-## Learning Laravel
+Also, 3 endpoints are added to this namespace.
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+<table>
+  <tr>
+    <th>Endpoint</th>
+    <th>HTTP Verb</th>
+    <th>Parameters</th>
+  </tr>
+  <tr>
+    <td>/api/getToken</td>
+    <td>POST</td>
+    <td>uuid</td>
+  </tr>
+  <tr>
+    <td>/api/saveResult</td>
+    <td>POST</td>
+    <td>token, a_value, b_value, operator</td>
+  </tr>
+   <tr>
+    <td>/api/loadResult</td>
+    <td>POST</td>
+     <td>token</td>
+  </tr>
+</table>
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+## Usage
 
-## Laravel Sponsors
+**/api/getToken**
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+This is API for get token from server. Validates the user by a user UID or some string and returns a token to use in a CalcApp. If users delete app and install again, they can load histories.
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
+Success response from the server:
 
-## Contributing
+```
+{
+    "data": {
+        "uuid": "u40-vvkhxng",
+        "token": "Rcp9imJA0gFno8Yw",
+        "updated_at": "2018-02-04 17:01:28",
+        "created_at": "2018-02-04 17:01:28",
+        "id": 18
+    },
+    "error": false
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+**/api/saveResult**
 
-## Security Vulnerabilities
+This is API for save history of CalcApp to server. Use token from getToken(string), value A(number), value B(number) and operator(string) to save it. (operator is enum : plus, minus, multiply, divide, power)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+Success response from the server:
 
-## License
+```
+{
+    "data": {
+        "token_id": 18,
+        "a_value": "10",
+        "b_value": "-30.2",
+        "operator": "multiply",
+        "updated_at": "2018-02-04 17:04:31",
+        "created_at": "2018-02-04 17:04:31",
+        "id": 22
+    },
+    "error": false
+}
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+**/api/loadResult**
+
+This is API for load history of CalcApp from server. It follow by token to send. So this API must send token to get data. It return to array of data by sort date.
+
+Success response from the server:
+
+```
+{
+    "data": [
+        {
+            "id": 22,
+            "token_id": 18,
+            "a_value": 10,
+            "b_value": -30.199999999999999,
+            "operator": "multiply",
+            "created_at": "2018-02-04 17:04:31",
+            "updated_at": "2018-02-04 17:04:31"
+        }
+    ],
+    "error": false
+}
+```
+
+All APIs if error or have problem will return 400
+
+## Built With
+
+* [Google Cloud Platform](https://cloud.google.com) - Cloud service
+* [Laravel](https://laravel.com/) - PHP Framework
+
+## Reference
+* [https://cloud.google.com/community/tutorials/run-laravel-on-appengine-flexible](https://cloud.google.com/community/tutorials/run-laravel-on-appengine-flexible)
+
+## Authors
+
+* **Weerayut Chalaruk** 
