@@ -1,0 +1,28 @@
+runtime: php
+env: flex
+
+runtime_config:
+  document_root: public
+
+# Ensure we skip ".env", which is only for local development
+skip_files:
+  - .env
+
+env_variables:
+  # Put production environment variables here.
+  APP_LOG: errorlog
+  APP_KEY: base64:yvvQgBEhBIm71I2acq0iWUshypzoPcJiMHpC6KXi77g=
+  STORAGE_DIR: /tmp
+  CACHE_DRIVER: database
+  SESSION_DRIVER: database
+  ## Set these environment variables according to your CloudSQL configuration.
+  DB_HOST: localhost
+  DB_DATABASE: calsapp
+  DB_USERNAME: root
+  DB_PASSWORD: Zaq!2wsxZ
+  DB_SOCKET: "/cloudsql/semiotic-axis-194016:asia-east1:calsapp"
+
+beta_settings:
+    # for Cloud SQL, set this value to the Cloud SQL connection name,
+    # e.g. "project:region:cloudsql-instance"
+    cloud_sql_instances: "semiotic-axis-194016:asia-east1:calsapp"
