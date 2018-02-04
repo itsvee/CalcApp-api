@@ -17,13 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('results', 'HistoryController@index');
-Route::get('results/lastest', 'HistoryController@lastest');
+Route::post('getToken', 'TokenController@getToken');
+Route::post('saveResult', 'HistoryController@store');
+Route::post('loadResult', 'HistoryController@index');
 
+// Route::get('results/lastest', 'HistoryController@lastest');
 // Route::get('results/{result}', 'HistoryController@show');
-
-Route::post('save', 'HistoryController@store');
-
 // Route::put('results/{result}', 'HistoryController@update');
-
 // Route::delete('results/{result}', 'HistoryController@delete');

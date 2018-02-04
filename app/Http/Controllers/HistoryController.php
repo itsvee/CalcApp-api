@@ -8,35 +8,77 @@ use Illuminate\Support\Facades\DB;
 
 class HistoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $histories = History::all();
-        if (!$histories) {
-            throw new HttpException(400, "Invalid data");
+        if($request->token !== NULL || (!empty($request->token))) {
+            $token = DB::table('tokens')->select('id')->where('token', $request->token)->first();
+            if (!empty($token)) {
+                // $item = DB::table('histories')->select('token_id', 'email as user_email')->get();
+                // dd($token->id);
+                $item = DB::table('histories')->where('token_id', '=', $token->id)->latest()->get();
+                $arr = array(
+                    'data'  => $item,
+                    'error' => false,
+                );
+                return response()->json($arr, 200);
+            } else {
+                $arr = array(
+                    'error'         => true,
+                    'error_message' => "NO_TOKEN",
+                );
+                return response()->json($arr, 400); 
+            }
+        } else {
+            $arr = array(
+                'error'         => true,
+                'error_message' => "NO_TOKEN",
+            );
+            return response()->json($arr, 400); 
         }
-        return response()->json(
-            $histories,
-            200
-        );
-    }
-
-    public function lastest()
-    {
-        $query = DB::table('histories')->orderBy('created_at', 'desc')->first();
-        if (!$query) {
-            throw new HttpException(400, "Invalid data");
-        }
-        return response()->json(
-            $query,
-            200
-        );
     }
 
     public function store(Request $request)
     {
-        $history = History::create($request->all());
+        if($request->token !== NULL || (!empty($request->token))) {
+            $query = DB::table('tokens')->where('token', $request->token)->first();
+            if (!empty($query)) {
+                // dd(is_numeric($request->a_value));
+                if( (($request->a_value !== NULL || (!empty($request->a_value))) && (is_numeric($request->a_value)) ) && 
+                (($request->b_value !== NULL || (!empty($request->b_value))) && (is_numeric($request->b_value))) && 
+                ($request->operator !== NULL || (!empty($request->operator))) ) {
+                    $user = History::create([
+                        'token_id'  =>  $query->id,
+                        'a_value'   =>  $request->a_value,
+                        'b_value'   =>  $request->b_value,
+                        'operator'  =>  $request->operator,
+                    ]);
+                    $arr = array(
+                        'data'  =>  $user,
+                        'error' =>  false,
+                    );
+                    return response()->json($arr, 201);
+                } else {
+                    $arr = array(
+                        'error'         => true,
+                        'error_message' => "NO_INPUT",
+                    );
+                    return response()->json($arr, 400);                    
+                }
+            } else {
+                $arr = array(
+                    'error'         => true,
+                    'error_message' => "NO_TOKEN",
+                );
+                return response()->json($arr, 400); 
+            }
+        } else {
+            $arr = array(
+                'error'         => true,
+                'error_message' => "NO_INPUT",
+            );
+            return response()->json($arr, 400); 
+        }
 
-        return response()->json($history, 201);
 
     }
 

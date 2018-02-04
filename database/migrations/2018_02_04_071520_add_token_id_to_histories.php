@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateHistoriesTable extends Migration
+class AddTokenIdToHistories extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('histories', function (Blueprint $table) {
-            $table->increments('id');
-            $table->double('a_value');
-            $table->double('b_value');
-            $table->string('operator');
-            $table->timestamps();
+        Schema::table('histories', function($table) {
+            $table->string('token_id')->after('id');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('histories');
+        Schema::table('histories', function($table) {
+            $table->dropColumn('token_id');
+        });
     }
 }
